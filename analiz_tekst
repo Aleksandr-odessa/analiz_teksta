@@ -1,0 +1,99 @@
+import pandas as pd
+
+data = pd.read_csv('test_data.csv')
+# print(data)
+filter_manager = data['role'] == 'manager'
+data_manager = data.loc[filter_manager]
+list_hello = [ 'здравствуйте','доброе утро', 'добрый день', 'добрый вечер']
+list_bye = ['до свидания',' хорошего дня']
+list_my_name = ['меня', 'моё имя', 'менеджер', 'меня зовут', 'да это', 'алло это']
+list_my_company = ['компания', 'это компания', 'я представляю компанию', 'это фирма', 'я представляю фирму' ]
+
+def data_free():
+    rez = []
+    for text in data_manager.text:
+        data_free = text.lower()
+        rez.append(data_free)
+    return (rez)
+
+free_text  = data_free()
+manager = data_manager.copy()
+manager['text_free'] = free_text
+data2 = data.copy()
+manager['text_free'] = free_text
+data2['insight'] = None
+
+def hello_bye(array):
+    rez = []
+    for ind,text in enumerate(data2.text):
+        free_text = text.lower()
+        if data2.at[ind,'role'] == 'manager':
+            for j in array:
+                if free_text.find(j)>-1:
+                    data2.at[ind, 'insight'] = 1
+                # data[ind].insight = 1
+                # print(data.insight)
+                    rez.append(free_text)
+    return (rez)
+
+def name_company(array):
+    rez = {}
+    i = 0
+    for text in manager.text_free:
+        for j in array:
+            if text.find(j) > -1:
+                list_text = [j, text]
+                rez[i] = list_text
+        i += 1
+    return (rez)
+
+def search_name_company(dict_my_name):
+    rez = []
+    for var in dict_my_name.values():
+        str_name= var[1].partition(var[0])[2].strip()
+        name = str_name.split(' ')[0]
+        rez.append(name)
+    return(rez)
+
+
+dict_my_name = name_company(list_my_name)
+dict_my_company = name_company(list_my_company)
+
+
+print(" пункт a)  реплики с приветствием")
+for i in hello_bye(list_hello):
+    print(i)
+print('---------------------------------------')
+print(" пункт b) реплики, где менеджер представил себя.")
+for i in dict_my_name.values():
+    print(i[1])
+print('---------------------------------------')
+print(" пункт c) имя менеджера.")
+for i in search_name_company(dict_my_name):
+    print(i)
+print('---------------------------------------')
+print(" пункт d) название компании")
+for i in search_name_company(dict_my_company):
+    print(i)
+print('---------------------------------------')
+# # #e)
+print(" пункт e) реплики, где менеджер попрощался.")
+for i in hello_bye(list_bye):
+    print(i)
+print('---------------------------------------')
+
+data_set = set(data2['dlg_id'].values.tolist())
+
+def manager(data_set):
+    for i in data_set:
+        filter = data2['dlg_id'] == i
+        val_hello_bye = data2.loc[filter]
+        s = val_hello_bye['insight'].sum()
+        if s == 2:
+            print(f'диалог {i} -  требование выполняется')
+        else:
+            print(f'диалог {i} -  требование не выполняется')
+
+
+print(" пункт f) Проверять требование к менеджеру")
+manager(data_set)
