@@ -1,7 +1,6 @@
 import pandas as pd
 
 data = pd.read_csv('test_data.csv')
-# print(data)
 filter_manager = data['role'] == 'manager'
 data_manager = data.loc[filter_manager]
 list_hello = [ 'здравствуйте','доброе утро', 'добрый день', 'добрый вечер']
@@ -31,8 +30,6 @@ def hello_bye(array):
             for j in array:
                 if free_text.find(j)>-1:
                     data2.at[ind, 'insight'] = 1
-                # data[ind].insight = 1
-                # print(data.insight)
                     rez.append(free_text)
     return (rez)
 
@@ -76,7 +73,7 @@ print(" пункт d) название компании")
 for i in search_name_company(dict_my_company):
     print(i)
 print('---------------------------------------')
-# # #e)
+
 print(" пункт e) реплики, где менеджер попрощался.")
 for i in hello_bye(list_bye):
     print(i)
